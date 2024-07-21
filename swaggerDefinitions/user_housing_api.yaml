@@ -1,0 +1,233 @@
+openapi: 3.0.0
+info:
+  title: API de Usuarios y Viviendas
+  description: API para gestionar usuarios y sus viviendas.
+  version: 1.0.0
+
+paths:
+  /users:
+    get:
+      summary: Obtener todos los usuarios
+      description: Devuelve una lista de todos los usuarios.
+      responses:
+        '200':
+          description: Solicitud exitosa, devuelve la lista de usuarios.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Crear un usuario
+      description: Crea un nuevo usuario.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Usuario creado exitosamente.
+        '400':
+          description: Datos del usuario inválidos.
+
+  /users/{userId}:
+    get:
+      summary: Obtener un único usuario
+      description: Devuelve la información de un usuario específico.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud exitosa, devuelve los datos del usuario.
+        '404':
+          description: Usuario no encontrado.
+    patch:
+      summary: Actualizar un usuario parcialmente
+      description: Actualiza parcialmente la información de un usuario.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Actualización exitosa.
+        '400':
+          description: Datos de actualización inválidos.
+        '404':
+          description: Usuario no encontrado.
+    put:
+      summary: Actualizar un usuario por completo
+      description: Actualiza toda la información de un usuario.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Actualización exitosa.
+        '400':
+          description: Datos de actualización inválidos.
+        '404':
+          description: Usuario no encontrado.
+    delete:
+      summary: Borrar un usuario
+      description: Elimina un usuario si no tiene viviendas asociadas.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Eliminación exitosa.
+        '400':
+          description: El usuario tiene viviendas asociadas y no puede ser eliminado.
+        '404':
+          description: Usuario no encontrado.
+
+  /users/{userId}/houses:
+    get:
+      summary: Obtener todas las viviendas de un usuario
+      description: Devuelve todas las viviendas de un usuario específico.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: city
+          in: query
+          schema:
+            type: string
+        - name: street
+          in: query
+          schema:
+            type: string
+        - name: country
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud exitosa, devuelve la lista de viviendas.
+        '400':
+          description: Parámetros de filtro inválidos.
+        '404':
+          description: Usuario no encontrado.
+    post:
+      summary: Crear una vivienda para un usuario
+      description: Crea una nueva vivienda para un usuario específico.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/House'
+      responses:
+        '201':
+          description: Vivienda creada exitosamente.
+        '400':
+          description: Datos de la vivienda inválidos.
+        '404':
+          description: Usuario no encontrado.
+
+  /users/{userId}/houses/{houseId}:
+    put:
+      summary: Actualizar una vivienda de un usuario
+      description: Actualiza la información de una vivienda específica de un usuario.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: houseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/House'
+      responses:
+        '200':
+          description: Actualización exitosa.
+        '400':
+          description: Datos de actualización inválidos.
+        '404':
+          description: Usuario o vivienda no encontrados.
+    delete:
+      summary: Borrar una vivienda de un usuario
+      description: Elimina una vivienda específica de un usuario.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: houseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Eliminación exitosa.
+        '404':
+          description: Usuario o vivienda no encontrados.
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+    House:
+      type: object
+      properties:
+        id:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
